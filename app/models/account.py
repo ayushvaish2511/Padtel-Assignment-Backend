@@ -24,7 +24,7 @@ class Account(BaseModel):
 
     class Config:
         orm_mode = True
-        exclude = ['account_id']  # Exclude account_id from the response model
+        exclude = ['account_id'] 
 
 class AccountReturn(BaseModel):
     ACCOUNT_ID: int

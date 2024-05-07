@@ -5,18 +5,16 @@ import secrets
 import string
 
 from app.models import account
-# from app.api import account
 from app.db import snowflake
 
 router = APIRouter()
 
-# Dependency to get Snowflake connection
 def get_snowflake_conn():
     return snowflake.connect_to_snowflake()
 
 def generate_app_secret_token():
     alphabet = string.ascii_letters + string.digits
-    return ''.join(secrets.choice(alphabet) for i in range(32))  # Generate a 32-character token
+    return ''.join(secrets.choice(alphabet) for i in range(32))  
 
 @router.post("/accounts/", response_model=int)
 def create_account(account: account.AccountCreate, conn=Depends(get_snowflake_conn)):
@@ -32,7 +30,6 @@ def create_account(account: account.AccountCreate, conn=Depends(get_snowflake_co
     """
     with conn.cursor() as cur:
         cur.execute(query, account_data)
-        # Fetch the last inserted ID using the Snowflake function for sequences
         cur.execute("SELECT account_id FROM accounts WHERE email = %s AND account_name = %s", (account_data['email'], account_data['account_name']))
         row = cur.fetchone()
         return row[0]
@@ -59,7 +56,6 @@ def update_account(account_id: int, account: account.AccountUpdate, conn = Depen
     """
     Update an account by ID
     """
-    # Get the existing account data
     existing_account_query = "SELECT * FROM accounts WHERE account_id = %(account_id)s"
     with conn.cursor(DictCursor) as cur:
         cur.execute(existing_account_query, {"account_id": account_id})
@@ -67,7 +63,6 @@ def update_account(account_id: int, account: account.AccountUpdate, conn = Depen
         if existing_account_data is None:
             raise HTTPException(status_code=404, detail="Account not found")
     
-    # Update account data with the provided fields
     account_update_data = {
         "account_id": existing_account_data.get("ACCOUNT_ID"),
         "email": existing_account_data.get("EMAIL"),
@@ -77,9 +72,8 @@ def update_account(account_id: int, account: account.AccountUpdate, conn = Depen
     }
 
     updated_account_data = account_update_data.copy()
-    updated_account_data.update(account.dict(exclude_unset=True))  # Update only the provided fields
+    updated_account_data.update(account.dict(exclude_unset=True))  
     print('updateee', updated_account_data)
-    # Execute the update query
     update_query = """
     UPDATE accounts
     SET email = %(email)s, account_name = %(account_name)s, website = %(website)s

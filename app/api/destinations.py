@@ -3,12 +3,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from snowflake.connector import DictCursor
 
 from app.models import destination as schemas
-# from app.api import schemas
 from app.db import snowflake
 
 router = APIRouter()
 
-# Dependency to get Snowflake connection
 def get_snowflake_conn():
     return snowflake.connect_to_snowflake()
 
@@ -21,7 +19,6 @@ def create_destination(destination: schemas.DestinationCreate, conn=Depends(get_
     INSERT INTO destinations (url, http_method, headers, account_id)
     VALUES (%s, %s, %s, %s)
     """
-    # Convert headers dictionary to JSON string
     headers_json = json.dumps(destination.headers)
     with conn.cursor() as cur:
         cur.execute(query, (destination.url, destination.http_method, headers_json, destination.account_id))
@@ -76,7 +73,7 @@ def update_destination(destination_id: int, destination: schemas.DestinationUpda
     WHERE destination_id = %s
     """
     with conn.cursor() as cur:
-        cur.execute(query, (updated_destination_data['url'], updated_destination_data['http_method'], headers_json, destination_id))  # Corrected the second parameter here
+        cur.execute(query, (updated_destination_data['url'], updated_destination_data['http_method'], headers_json, destination_id)) 
         conn.commit()
         if cur.rowcount == 0:
             raise HTTPException(status_code=404, detail="Destination not found")
