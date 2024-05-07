@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+python-dotenv
+snowflake-connector-python
+python-jose[cryptography]
+python-multipart
+pandas
+numpy
+datetime
