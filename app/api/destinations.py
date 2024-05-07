@@ -77,10 +77,7 @@ def update_destination(destination_id: int, destination: schemas.DestinationUpda
     WHERE destination_id = %s
     """
     with conn.cursor() as cur:
-        # destination_data = destination.dict()
-        # destination_data["destination_id"] = destination_id
-        # headers_json = json.dumps(destination_data["headers"])
-        cur.execute(query, )
+        cur.execute(query, (updated_destination_data['url'], updated_destination_data['url'], headers_json, destination_id))
         conn.commit()
         if cur.rowcount == 0:
             raise HTTPException(status_code=404, detail="Destination not found")
