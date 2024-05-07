@@ -46,7 +46,6 @@ def get_destination(destination_id: int, conn=Depends(get_snowflake_conn)):
         return schemas.DestinationResponse(**destination_data)
 
 
-
 @router.put("/destinations/{destination_id}/", response_model=schemas.Destination)
 def update_destination(destination_id: int, destination: schemas.DestinationUpdate, conn=Depends(get_snowflake_conn)):
     """
@@ -77,7 +76,7 @@ def update_destination(destination_id: int, destination: schemas.DestinationUpda
     WHERE destination_id = %s
     """
     with conn.cursor() as cur:
-        cur.execute(query, (updated_destination_data['url'], updated_destination_data['url'], headers_json, destination_id))
+        cur.execute(query, (updated_destination_data['url'], updated_destination_data['http_method'], headers_json, destination_id))  # Corrected the second parameter here
         conn.commit()
         if cur.rowcount == 0:
             raise HTTPException(status_code=404, detail="Destination not found")

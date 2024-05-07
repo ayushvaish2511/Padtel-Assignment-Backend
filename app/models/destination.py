@@ -1,7 +1,7 @@
 # schemas.py
 
 from pydantic import BaseModel
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 class DestinationBase(BaseModel):
     url: str
@@ -11,8 +11,10 @@ class DestinationBase(BaseModel):
 class DestinationCreate(DestinationBase):
     account_id: int
 
-class DestinationUpdate(DestinationBase):
-    pass
+class DestinationUpdate(BaseModel):
+    url: Optional[str]
+    http_method: Optional[str]
+    headers: Optional[Dict[str, str]]
 
 class Destination(DestinationBase):
     destination_id: int
@@ -27,6 +29,6 @@ class DestinationResponse(BaseModel):
     HTTP_METHOD: str 
     HEADERS: str 
     ACCOUNT_ID: int 
-    
+
 class Message(BaseModel):
     message: str
